@@ -4,7 +4,7 @@ from django.db import models
 class User(models.Model):
     email = models.CharField(max_length=80, unique=True, help_text='Email')
     password = models.CharField(max_length=80, blank=False,help_text='Phone_number')
-    OTP=models.PositiveIntegerField(blank=True)
+    OTP=models.IntegerField(null=True,blank=True)
     phone_number = models.CharField(max_length=20, unique=True, help_text='Phone_number')
     created=models.DateTimeField(auto_now=True)
     token=models.CharField(blank=True,max_length=100)
