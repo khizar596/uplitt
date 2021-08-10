@@ -14,12 +14,15 @@ class RegisterView(generics.GenericAPIView):
     serializer_class = UserSerializer
     def post(self,request):
 
-        user=request.data
-        serializer=self.serializer_class(data=user)
-        serializer.is_valid(raise_exception=True)
-        token=string_generator()   #generating a token
-        serializer.save()
-        return Response({'Message':'Succesfully registered '},status=status.HTTP_201_CREATED)
+       user=request.data
+       serializer=self.serializer_class(data=user)
+       serializer.is_valid(raise_exception=True)
+       token=string_generator()#generating a token
+       serializer.validated_data['token']=token
+       serializer.save()
+       return Response({'Message':'Succesfully registered ',
+                         'token':f'{token}'},
+                        status=status.HTTP_201_CREATED)
 
 class LoginApiView(generics.GenericAPIView):
     serializer_class = LoginSerializer
@@ -79,9 +82,6 @@ class Sendverifyemail(generics.GenericAPIView):
 class Otpsend(generics.GenericAPIView):
     serializer_class = sendotp
     def post(self,request):
-
-        # start_Time=time.time()
-        # limit=start_Time+60
         OTP = OTP_numbr()
         # generating OTP
         serializer = self.serializer_class(data=request.data)
@@ -89,18 +89,20 @@ class Otpsend(generics.GenericAPIView):
         phone_number = serializer.validated_data['phone_number']
         user = User.objects.get(phone_number=phone_number)
         phone_number = phone_number
-        user.OTP = OTP
-        user.save()# saving in user's OTP coloumn
-        account_sid = 'AC6c9d7dcd896050c754bf77761981dca4'
-        auth_token = '7a0949a9035685aa1937830d57a39342'
-        client = Client(account_sid, auth_token)
+        if user:
+            user.OTP = OTP
+            user.save()# saving in user's OTP coloumn
+            account_sid = 'AC6c9d7dcd896050c754bf77761981dca4'
+            auth_token = '543f9bfa6c79583a0570d61018a61874'
+            client = Client(account_sid, auth_token)
 
-        message = client.messages.create(
-            body=f'Your verification code is : {OTP}  ',
-            from_='+12513086017',
-            to=f'{phone_number}'
-        )
-        return Response('OTP is sent')
+            message = client.messages.create(
+                body=f'Your verification code is : {OTP}  ',
+                from_='+12513086017',
+                to=f'{phone_number}'
+            )
+            return Response('OTP is sent')
+        return Response('Number is not registered')
 
 
     # +++++++++++SENDING FOR PASSWORD RESET EMAIL+++++++++++
