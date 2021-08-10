@@ -5,12 +5,11 @@ from django.contrib import auth
 class UserSerializer(serializers.ModelSerializer):
     password=serializers.CharField(max_length=68,min_length=6,write_only=True)
     token=serializers.CharField(max_length=90,min_length=6,read_only=True)
-    OTP=serializers.IntegerField(read_only=True,allow_null=True)
     user_active=serializers.BooleanField(read_only=True)
 
     class Meta:
         model=User
-        fields=['id','email','password','phone_number','token','OTP','user_active']
+        fields=['id','email','password','phone_number','token','user_active']
 
 
 class LoginSerializer(serializers.ModelSerializer):
