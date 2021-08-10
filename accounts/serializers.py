@@ -4,7 +4,9 @@ from rest_framework.exceptions import AuthenticationFailed
 from django.contrib import auth
 class UserSerializer(serializers.ModelSerializer):
     password=serializers.CharField(max_length=68,min_length=6,write_only=True)
+    
     token=serializers.CharField(max_length=90,min_length=6,read_only=True)
+    
     user_active=serializers.BooleanField(read_only=True)
 
     class Meta:
@@ -13,6 +15,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class LoginSerializer(serializers.ModelSerializer):
+    
     email=serializers.EmailField(max_length=225,min_length=3,help_text='email')
     password=serializers.CharField(max_length=66,min_length=6,write_only=True,help_text='password')
 
